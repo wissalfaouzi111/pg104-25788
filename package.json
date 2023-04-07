@@ -1,0 +1,19 @@
+{
+    "name": "pg104",
+    "version": "1.0.0",
+    "description": "Repository for the PG104 codes",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "type": "module",
+    "keywords": [],
+    "author": "",
+    "license": "0BSD",
+    "imports": {
+        "#src/*": "./src/*",
+        "#test/*": "./test/*"
+    },
+    "dependencies": {
+    }
+}
