@@ -52,7 +52,8 @@ function raiseError({ fun_name: fun_name, args: args,
         message = message + ` : ${reason}`;
     }
     throw new Error(message);
-    return undefined; // Never reached
+    /* eslint-disable no-unreachable */
+    return undefined; // Never reached, helps tsc
 }
 
 export {
