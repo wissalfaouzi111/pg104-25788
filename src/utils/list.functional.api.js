@@ -71,6 +71,7 @@ function cons(aHead, aTail) {
  *
  * @param {T.List<any>} aList - the list considered
  * @returns {any} - the head of `aList` if any
+ * @throws {Error} Error - if the list is empty
  */
 function head(aList)    {
     if (!isList(aList)) {
@@ -94,6 +95,7 @@ function head(aList)    {
  *
  * @param {T.List<any>} aList - the list considered
  * @returns {any} - the tail of `aList` if any
+ * @throws {Error} Error - if the list is empty
  */
 function tail(aList)    {
     if (!isList(aList)) {
@@ -129,6 +131,60 @@ function isList(aValue) {
 }
 
 
+/** Given two lists `aList1` and `aList2`, returns the concatenation
+ * of the two with `aList1` first.
+ *
+ * @param {T.List<any>} aList1 - the first list
+ * @param {T.List<any>} aList2 - the second list
+ * @returns {T.List<any>} - the concatenation of the two lists
+ */
+function listAppend(aList1, aList2) {
+    function listAppendInt(toAppend, toMirror, lasts) {
+        if (isEmpty(toAppend)) {
+            if (isEmpty(toMirror))
+                return lasts;
+            else
+                return listAppendInt(toAppend, tail(toMirror),
+                                     cons(head(toMirror), lasts));
+        } else
+            return listAppendInt(tail(toAppend),
+                                 cons(head(toAppend), toMirror), lasts);
+
+    }
+    return listAppendInt(aList1, nil, aList2);
+}
+
+
+/** Given a list `aList`, returns its number of elements
+ *
+ * @param {T.List<any>} aList - the list considered
+ * @returns {number} its length
+ */
+function listLength(aList) {
+    if (isEmpty(aList))
+        return 0;
+    else return 1 + listLength(tail(aList));
+}
+
+
+/** Returns a list containing all the integers in the interval
+ * `[start;end[`, in increasing order.
+ *
+ * @param {number} start - the start of the interval
+ * @param {number} end - the end of the interval
+ * @returns {T.List<number>} a list of integers
+ *
+ * @example
+ * listIota(1, 4) // -> "(|1, 2, 3|)"
+ */
+function listIota(start, end) {
+    if (Math.ceil(start) >= end)
+        return nil;
+    else
+        return cons(Math.ceil(start), listIota(start+1, end));
+}
+
+
 /** Computes a string displaying the contents of the list `aList`. This
  * function is currified, takes a printing function for the values as
  * first parameter, and then returns a function taking the list to
@@ -154,7 +210,7 @@ function listToStringInternal(dispFun = (s) => s) {
             return raiseError({ fun_name: "listToString", args: arguments,
                                 reason: `the argument is not a list`});
         else if (isEmpty(aList))
-            return `(|nil|)`;
+            return `(| |)`;
         else
             return `(|${listDispRec(dispFun, aList)}|)`;
     };
@@ -162,9 +218,23 @@ function listToStringInternal(dispFun = (s) => s) {
 const listToString = listToStringInternal;
 
 
+/** Given a display function `dispFun`, and a list `aList`, logs the
+ * contents representing the contents of the list on the console. This
+ * function is currified on its first parameter.
+ *
+ * @param {(a: any) => string} dispFun - a function that displays a single element
+ * @returns {(a: T.List<any>) => void} - a function displaying a list
+ */
+function listDisp(dispFun = (s) => s) {
+    return (aList) => console.log(listToString(dispFun)(aList));
+}
+
+
 export {
     cons, nil,
     head, tail,
-    isEmpty,
-    listToString,
+    isEmpty, isList,
+    listAppend, listLength,
+    listIota,
+    listToString, listDisp,
 };
